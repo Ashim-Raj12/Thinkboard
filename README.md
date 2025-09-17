@@ -1,91 +1,139 @@
 # Thinkboard - Notes Management App
 
-Thinkboard is a simple and efficient notes management application built with a MERN stack backend. It allows users to create, read, update, and delete notes with ease.
+Thinkboard is a full-stack notes management application built with the MERN stack (MongoDB, Express, React, Node.js). It allows users to create, read, update, and delete notes with ease. The application features a responsive UI, real-time notifications, and rate limiting for API protection.
 
 ## Features
 
-- Create new notes with a title and content
-- View all notes sorted by creation date (most recent first)
-- Update existing notes
-- Delete notes
-- RESTful API backend built with Express and MongoDB
-- Rate limiting to prevent abuse using Upstash Redis
+- **Create Notes**: Add new notes with title and content
+- **View Notes**: Display all notes in a responsive grid layout, sorted by creation date
+- **Edit Notes**: Update existing notes inline
+- **Delete Notes**: Remove notes with confirmation
+- **Rate Limiting**: API protected with Upstash Redis rate limiting (100 requests per 60 seconds)
+- **Responsive Design**: Mobile-friendly UI using Tailwind CSS and DaisyUI
+- **Real-time Notifications**: Toast notifications for user feedback
+- **RESTful API**: Backend API with proper error handling and status codes
+
+## Tech Stack
+
+### Backend (Server)
+- **Node.js** with **Express.js** for the web framework
+- **MongoDB** with **Mongoose** for data modeling
+- **Upstash Redis** for rate limiting
+- **dotenv** for environment variable management
+- **nodemon** for development auto-restart
+- ES modules for modern JavaScript
+
+### Frontend (Client)
+- **React** with **Vite** for fast development and building
+- **Tailwind CSS** and **DaisyUI** for styling and components
+- **React Router** for client-side routing
+- **Axios** for API requests
+- **React Hot Toast** for notifications
+- **Lucide React** for icons
+
+## Project Structure
+
+```
+thinkboard/
+├── client/          # React frontend
+│   ├── src/
+│   │   ├── components/  # Reusable UI components
+│   │   ├── pages/       # Page components
+│   │   └── lib/         # Utilities (axios config)
+│   ├── package.json
+│   └── vite.config.js
+├── server/          # Node.js backend
+│   ├── src/
+│   │   ├── config/      # Database and Redis config
+│   │   ├── controllers/ # Request handlers
+│   │   ├── middleware/   # Rate limiting middleware
+│   │   ├── models/       # Mongoose models
+│   │   └── routes/       # API routes
+│   ├── package.json
+│   └── server.js
+└── README.md
+```
 
 ## Backend (Server)
 
-The backend is built using Node.js, Express, and MongoDB with Mongoose for data modeling. It uses ES modules for modern JavaScript syntax.
-
-### Key Technologies
-
-- Express: Web framework for Node.js
-- MongoDB: NoSQL database for storing notes
-- Mongoose: ODM for MongoDB
-- dotenv: Environment variable management
-- nodemon: Development utility for automatic server restarts
-- Upstash Redis: Cloud Redis service used for rate limiting
-- @upstash/ratelimit: Rate limiting middleware integrated with Upstash Redis
-
 ### API Endpoints
 
-- `GET /api/notes` - Get all notes  
-  Response: 200 OK, JSON array of notes sorted by creation date descending
+- `GET /api/notes` - Get all notes (sorted by creation date descending)
+- `GET /api/notes/:id` - Get a single note by ID
+- `POST /api/notes` - Create a new note (requires title and content)
+- `PUT /api/notes/:id` - Update a note by ID
+- `DELETE /api/notes/:id` - Delete a note by ID
 
-- `GET /api/notes/:id` - Get a single note by ID  
-  Response: 200 OK with note JSON if found, 404 Not Found if no note with given ID
+### Environment Variables (Server)
 
-- `POST /api/notes` - Create a new note  
-  Request body: JSON with `title` (string) and `content` (string)  
-  Response: 201 Created with created note JSON
-
-- `PUT /api/notes/:id` - Update a note by ID  
-  Request body: JSON with `title` (string) and `content` (string)  
-  Response: 200 OK with updated note JSON if found, 404 Not Found if no note with given ID
-
-- `DELETE /api/notes/:id` - Delete a note by ID  
-  Response: 200 OK with success message if deleted, 404 Not Found if no note with given ID
-
-### Rate Limiting
-
-To prevent abuse, the server uses rate limiting middleware powered by Upstash Redis. The limit is set to 100 requests per 60 seconds per client. If the limit is exceeded, the server responds with HTTP 429 Too Many Requests.
-
-### Environment Variables
-
-Create a `.env` file in the `server` directory with the following variables:
+Create a `.env` file in the `server` directory:
 
 ```
 MONGODB_URI=your_mongodb_connection_string
-PORT=5000
+PORT=8000
 UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url
 UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token
 ```
 
-The Redis variables are required for the rate limiting middleware to connect to Upstash Redis.
+### Setup and Running (Backend)
 
-### Setup and Running
+1. Navigate to the `server` directory
+2. Install dependencies: `npm install`
+3. Create `.env` file with required variables
+4. Start the server: `npm run dev` (development) or `npm start` (production)
 
-1. Clone the repository  
-2. Navigate to the `server` directory  
-3. Install dependencies:  
-   ```
-   npm install
-   ```  
-4. Create a `.env` file with the environment variables as described above  
-5. Start the server:  
-   ```
-   npm start
-   ```  
-   or for development with automatic restarts:  
-   ```
-   npm run dev
-   ```  
+The server runs on `http://localhost:8000` by default.
 
-The server will run on `http://localhost:5000` by default.
+## Frontend (Client)
+
+### Pages
+
+- **Home (/)**: Displays all notes in a grid, handles loading states and rate limiting
+- **Create (/create)**: Form to create new notes with validation
+- **Note Detail (/note/:id)**: View and edit individual notes, delete functionality
+
+### Components
+
+- **Navbar**: Navigation header with link to create page
+- **NoteCard**: Displays note preview with title and content snippet
+- **NotesNotFound**: Empty state when no notes exist
+- **RateLimit**: Display when API rate limit is exceeded
+
+### Setup and Running (Frontend)
+
+1. Navigate to the `client` directory
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
+
+The client runs on `http://localhost:5173` and proxies API requests to the backend.
+
+## Development
+
+### Prerequisites
+
+- Node.js (v14+)
+- MongoDB (local or cloud instance)
+- Upstash Redis account for rate limiting
+
+### Running the Full Application
+
+1. Start the backend server (follow backend setup)
+2. Start the frontend client (follow frontend setup)
+3. Open `http://localhost:5173` in your browser
+
+### Building for Production
+
+1. Build the frontend: `cd client && npm run build`
+2. The built files will be in `client/dist/`
+3. Serve the backend and frontend together (backend can serve static files or use a reverse proxy)
 
 ## Notes
 
-- Make sure MongoDB is running and accessible via the connection string provided in `.env`.  
-- The API returns JSON responses and expects JSON request bodies for POST and PUT requests.  
-- The server uses ES modules, so ensure your environment supports this or use Node.js version 14+.
+- The application uses ES modules throughout
+- API requests include proper error handling and loading states
+- Rate limiting prevents abuse but allows normal usage
+- The UI is fully responsive and works on mobile devices
+- MongoDB connection is required for data persistence
 
 ## Author
 
@@ -93,4 +141,4 @@ Ashim Raj
 
 ---
 
-This README provides an overview of the Thinkboard backend server, its features, setup instructions, API endpoints, and rate limiting details to help you get started quickly.
+This README provides a comprehensive overview of the Thinkboard application, including setup instructions, features, and technical details for both frontend and backend components.

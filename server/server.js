@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import notesRoutes from "./src/routes/notesRoutes.js";
 import connectDB from "./src/config/db.js";
 import rateLimiter from "./src/middleware/rateLimiter.js";
@@ -8,6 +9,12 @@ dotenv.config();
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(rateLimiter);
 
